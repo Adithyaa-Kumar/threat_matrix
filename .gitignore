@@ -1,0 +1,24 @@
+# Datasets (too large for repository)
+data/
+
+# Virtual environment
+venv/
+
+# PyTorch models
+*.pth
+*.pt
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.env

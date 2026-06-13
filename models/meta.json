@@ -1,0 +1,21 @@
+{
+  "n_features": 60,
+  "n_classes": 4,
+  "class_names": [
+    "browsing",
+    "streaming",
+    "video_call",
+    "gaming"
+  ],
+  "embed_dim": 128,
+  "d_model": 64,
+  "n_heads": 4,
+  "n_layers": 3,
+  "architecture": "FlowTransformer",
+  "label_map": {
+    "browsing": 0,
+    "streaming": 1,
+    "video_call": 2,
+    "gaming": 3
+  }
+}

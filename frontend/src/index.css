@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600&display=swap');
+
+:root {
+  --bg-primary:    #060b14;
+  --bg-secondary:  #0a1120;
+  --bg-card:       #0d1726;
+  --bg-card-hover: #111e30;
+  --border:        rgba(0, 212, 170, 0.12);
+  --border-bright: rgba(0, 212, 170, 0.30);
+  --teal:          #00d4aa;
+  --teal-dim:      rgba(0, 212, 170, 0.15);
+  --teal-glow:     rgba(0, 212, 170, 0.08);
+  --amber:         #f59e0b;
+  --amber-dim:     rgba(245, 158, 11, 0.15);
+  --red:           #ef4444;
+  --red-dim:       rgba(239, 68, 68, 0.15);
+  --blue:          #3b82f6;
+  --blue-dim:      rgba(59, 130, 246, 0.15);
+  --purple:        #a78bfa;
+  --purple-dim:    rgba(167, 139, 250, 0.15);
+  --text-primary:  #e2e8f0;
+  --text-secondary:#64748b;
+  --text-dim:      #334155;
+  --font-hud:      'Orbitron', monospace;
+  --font-mono:     'Share Tech Mono', monospace;
+  --font-body:     'Rajdhani', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+/* HUD scan line animation */
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes pulse-teal {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(20px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes slide-in-up {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+@keyframes anomaly-flash {
+  0%, 100% { border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); }
+  50%       { border-color: rgba(239, 68, 68, 0.8); background: rgba(239, 68, 68, 0.12); }
+}
+
+.animate-slide-in { animation: slide-in-right 0.3s ease-out; }
+.animate-fade-up  { animation: slide-in-up 0.4s ease-out; }
