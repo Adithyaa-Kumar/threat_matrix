@@ -45,47 +45,69 @@ LABEL_ORDER = ['benign', 'ddos', 'dos', 'portscan', 'botnet', 'bruteforce']
 # Covers both CIC-IDS-2017 and CSE-CIC-IDS-2018 label variants
 ATTACK_MAP = {
     # ── Benign ────────────────────────────────────────────────────────────────
-    'BENIGN':                     'benign',
-    'Benign':                     'benign',
-    'benign':                     'benign',
-    'Normal':                     'benign',
-    # ── DDoS ─────────────────────────────────────────────────────────────────
-    'DDoS':                       'ddos',
-    'DDOS attack-HOIC':           'ddos',
-    'DDOS attack-LOIC-UDP':       'ddos',
-    'DDoS attacks-LOIC-HTTP':     'ddos',
-    'DoS attacks-LOIC-HTTP':      'ddos',
-    'DoS attacks-HOIC':           'ddos',
-    'DoS attacks-Hulk':           'ddos',
-    'DoS attacks-GoldenEye':      'ddos',
-    'DoS attacks-Slowloris':      'ddos',
-    'Syn':                        'ddos',
-    'UDP Flood':                  'ddos',
-    'ICMP Flood':                 'ddos',
-    # ── DoS ──────────────────────────────────────────────────────────────────
-    'DoS Hulk':                   'dos',
-    'DoS GoldenEye':              'dos',
-    'DoS slowloris':              'dos',
-    'DoS Slowhttptest':           'dos',
-    'DoS slowhttptest':           'dos',
-    'Heartbleed':                 'dos',
-    # ── PortScan ─────────────────────────────────────────────────────────────
-    'PortScan':                   'portscan',
-    'Port Scan':                  'portscan',
-    'Infilteration':              'portscan',
-    'Infiltration':               'portscan',
-    # ── Botnet ───────────────────────────────────────────────────────────────
-    'Bot':                        'botnet',
-    'Botnet ARES':                'botnet',
-    # ── Brute Force ──────────────────────────────────────────────────────────
-    'FTP-Patator':                'bruteforce',
-    'SSH-Patator':                'bruteforce',
-    'Brute Force':                'bruteforce',
-    'Web Attack - Brute Force':   'bruteforce',
-    'Web Attack - XSS':           'bruteforce',
-    'Web Attack - Sql Injection': 'bruteforce',
-    'XSS':                        'bruteforce',
-    'SQL Injection':              'bruteforce',
+    'BENIGN':                               'benign',
+    'Benign':                               'benign',
+    'benign':                               'benign',
+    'Normal':                               'benign',
+
+    # ── DDoS — standard + improved-dataset variants ───────────────────────────
+    'DDoS':                                 'ddos',
+    'DDoS - Attempted':                     'ddos',
+    'DDOS attack-HOIC':                     'ddos',
+    'DDOS attack-LOIC-UDP':                 'ddos',
+    'DDoS attacks-LOIC-HTTP':               'ddos',
+    'DoS attacks-LOIC-HTTP':               'ddos',
+    'DoS attacks-HOIC':                     'ddos',
+    'DoS attacks-Hulk':                     'ddos',
+    'DoS attacks-GoldenEye':               'ddos',
+    'DoS attacks-Slowloris':               'ddos',
+    'Syn':                                  'ddos',
+    'UDP Flood':                            'ddos',
+    'ICMP Flood':                           'ddos',
+
+    # ── DoS — standard + improved-dataset variants ────────────────────────────
+    'DoS Hulk':                             'dos',
+    'DoS Hulk - Attempted':                 'dos',
+    'DoS GoldenEye':                        'dos',
+    'DoS GoldenEye - Attempted':            'dos',
+    'DoS slowloris':                        'dos',
+    'DoS Slowloris':                        'dos',
+    'DoS Slowloris - Attempted':            'dos',
+    'DoS Slowhttptest':                     'dos',
+    'DoS slowhttptest':                     'dos',
+    'DoS Slowhttptest - Attempted':         'dos',
+    'Heartbleed':                           'dos',
+
+    # ── PortScan — improved dataset uses 'Portscan' (lowercase s) ────────────
+    'PortScan':                             'portscan',
+    'Portscan':                             'portscan',       # <-- your friday.csv
+    'Port Scan':                            'portscan',
+    'Infiltration':                         'portscan',
+    'Infiltration - Attempted':             'portscan',
+    'Infiltration - Portscan':              'portscan',       # <-- your thursday.csv
+    'Infilteration':                        'portscan',
+
+    # ── Botnet — improved dataset uses 'Botnet' not 'Bot' ────────────────────
+    'Bot':                                  'botnet',
+    'Botnet':                               'botnet',         # <-- your friday.csv
+    'Botnet - Attempted':                   'botnet',         # <-- your friday.csv
+    'Botnet ARES':                          'botnet',
+
+    # ── Brute Force — improved dataset has verbose names ─────────────────────
+    'FTP-Patator':                          'bruteforce',
+    'FTP-Patator - Attempted':              'bruteforce',     # <-- your tuesday.csv
+    'SSH-Patator':                          'bruteforce',
+    'SSH-Patator - Attempted':              'bruteforce',     # <-- your tuesday.csv
+    'Brute Force':                          'bruteforce',
+    'Web Attack - Brute Force':             'bruteforce',
+    'Web Attack - Brute Force - Attempted': 'bruteforce',     # <-- your thursday.csv
+    'Web Attack - XSS':                     'bruteforce',
+    'Web Attack - XSS - Attempted':         'bruteforce',     # <-- your thursday.csv
+    'Web Attack - SQL Injection':           'bruteforce',
+    'Web Attack - SQL Injection - Attempted':'bruteforce',    # <-- your thursday.csv
+    'Web Attack - Sql Injection':           'bruteforce',
+    'XSS':                                  'bruteforce',
+    'SQL Injection':                        'bruteforce',
 }
 
 # ── 60 selected features from CICIDS ─────────────────────────────────────────
@@ -183,6 +205,9 @@ PREPARED_DIR    = Path('data/prepared')
 DEFAULT_MIN_PER_CLASS = 5000
 CHUNKSIZE             = 50_000
 FLUSH_ROWS            = 50_000
+# Cap rows read from any single CSV — prevents the 6 GB 2018 file from
+# killing RAM. 500k rows is plenty; we only need ~5-10k per class anyway.
+MAX_ROWS_PER_FILE     = 500_000
 
 
 def _log(msg):
@@ -222,25 +247,24 @@ def _map_labels(series: pd.Series) -> pd.Series:
     return series.str.strip().map(ATTACK_MAP)
 
 
-def _select_features(df: pd.DataFrame) -> tuple[np.ndarray, list]:
+def _select_features(df: pd.DataFrame) -> np.ndarray:
     """
     Select the 60 FEATURE_NAMES from df.
-    Returns (X, feature_list_actually_used).
-
-    Handles missing columns by substituting zeros and logs a warning.
-    This keeps the feature vector at exactly 60 dims even if a CSV is missing some.
+    Returns a unified matrix X of shape (N, 60).
     """
     available = set(df.columns)
     missing   = [f for f in FEATURE_NAMES if f not in available]
     if missing:
         _log(f"    [WARN] Missing {len(missing)} cols: {missing[:5]}{'...' if len(missing)>5 else ''} — substituting zeros")
+    
     cols = []
     for f in FEATURE_NAMES:
         if f in available:
             cols.append(df[f].values.astype(np.float32))
         else:
             cols.append(np.zeros(len(df), dtype=np.float32))
-    X = np.stack(cols, axis=1)   # (N, 60)
+            
+    X = np.stack(cols, axis=1)   # Shape: (N, 60)
     return X
 
 
@@ -346,6 +370,11 @@ def stream_to_parquet(cicids2017_root, cicids2018_root):
                 file_rows      += len(chunk_df)
                 total_rows_read += len(chunk_df)
 
+                # Hard cap per file — protects against 6 GB CSVs
+                if file_rows >= MAX_ROWS_PER_FILE:
+                    _log(f"  [CAP] {fname}: reached {MAX_ROWS_PER_FILE:,} row limit, moving on")
+                    break
+
         except Exception as e:
             _log(f"  [SKIP file] {fname}: {e}")
             skipped += 1
@@ -416,22 +445,35 @@ def build_splits(min_per_class: int):
     raw_counts = Counter(df['label'])
     _log(f"  {n_raw:,} rows | {dict(raw_counts)}")
 
-    # Validate every label exists with at least 200 samples
-    for lbl in LABEL_ORDER:
-        n = int((df['label'] == lbl).sum())
-        if n < 200:
-            raise ValueError(
-                f"'{lbl}' has only {n} samples (need ≥ 200). "
-                f"Check ATTACK_MAP or increase your dataset."
-            )
+    # ── Audit which classes are actually present ──────────────────────────────
+    present_counts = {lbl: int((df['label'] == lbl).sum()) for lbl in LABEL_ORDER}
+    _log(f"  Class counts: {present_counts}")
 
-    # Balance
-    target = min(int(df['label'].value_counts().min()), min_per_class)
+    absent_labels = [lbl for lbl in LABEL_ORDER if present_counts[lbl] == 0]
+    active_classes = [lbl for lbl in LABEL_ORDER if present_counts[lbl] > 0]  # Local variable
+    
+    if absent_labels:
+        _log(f"  [WARN] Absent classes (dropped): {absent_labels}")
+
+    _log(f"  Active classes ({len(active_classes)}): {active_classes}")
+
+    # Balance — oversample sparse classes rather than crashing
+    min_present = min(present_counts[lbl] for lbl in active_classes)
+    target = min(min_present, min_per_class)
+    if target < 500:
+        target = min(min_per_class, 5000)
+        _log(f"  [INFO] Sparse class detected — target set to {target} (oversampling enabled)")
     _log(f"── Balancing to {target} per class ──────────────────────────────────")
-    parts  = [
-        df[df['label'] == lbl].sample(n=target, random_state=42)
-        for lbl in LABEL_ORDER
-    ]
+
+    parts = []
+    for lbl in active_classes:
+        rows = df[df['label'] == lbl]
+        n    = len(rows)
+        if n >= target:
+            parts.append(rows.sample(n=target, random_state=42))
+        else:
+            _log(f"  [INFO] Oversampling '{lbl}': {n} → {target} (replace=True)")
+            parts.append(rows.sample(n=target, replace=True, random_state=42))
     df_bal = pd.concat(parts, ignore_index=True).sample(frac=1, random_state=42)
     del df, parts
     gc.collect()
@@ -460,8 +502,8 @@ def build_splits(min_per_class: int):
     del X_tr, X_val, X_te
     gc.collect()
 
-    # Encode labels
-    label_map = {lbl: i for i, lbl in enumerate(LABEL_ORDER)}
+    # Encode labels using the local active tracking list
+    label_map = {lbl: i for i, lbl in enumerate(active_classes)}
     def enc(lst): return np.array([label_map[l] for l in lst], dtype=np.int64)
     y_tr_i, y_val_i, y_te_i = enc(y_tr), enc(y_val), enc(y_te)
 
@@ -479,10 +521,10 @@ def build_splits(min_per_class: int):
 
     meta = {
         'label_map':          label_map,
-        'label_order':        LABEL_ORDER,
+        'label_order':        active_classes,
         'feature_names':      FEATURE_NAMES,
         'n_features':         N_FEATURES,
-        'n_classes':          len(LABEL_ORDER),
+        'n_classes':          len(active_classes),
         'embed_dim':          128,
         'd_model':            64,
         'n_heads':            4,
@@ -509,8 +551,7 @@ def build_splits(min_per_class: int):
     _log(f"    X_train {X_tr_s.shape}  X_val {X_val_s.shape}  X_test {X_te_s.shape}")
     _log(f"    Classes: {label_map}")
     _log("    Next → python3 train_encoder.py --epochs 100")
-
-
+    
 # ══════════════════════════════════════════════════════════════════════════════
 
 if __name__ == '__main__':

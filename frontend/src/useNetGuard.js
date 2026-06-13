@@ -4,21 +4,18 @@ const API = 'http://localhost:8000';
 const WS  = 'ws://localhost:8000/ws/stream';
 
 export function useNetGuard() {
-  const [connected,    setConnected]    = useState(false);
-  const [streaming,    setStreaming]    = useState(false);
-  const [flows,        setFlows]        = useState([]);        // last 60 flows for table
-  const [anomalies,    setAnomalies]    = useState([]);        // anomaly feed
-  const [session,      setSession]      = useState(null);      // summary stats
-  const [initInfo,     setInitInfo]     = useState(null);      // total_flows, classes etc
-  const [done,         setDone]         = useState(false);
-  const [embeddings,   setEmbeddings]   = useState([]);
-  const [explanation,  setExplaining]   = useState(null);      // { flow_id, text, loading }
-  const [chartData,    setChartData]    = useState([]);        // time-series for accuracy/score
+  const [connected,   setConnected]   = useState(false);
+  const [streaming,   setStreaming]   = useState(false);
+  const [flows,       setFlows]       = useState([]);
+  const [anomalies,   setAnomalies]   = useState([]);
+  const [session,     setSession]     = useState(null);
+  const [done,        setDone]        = useState(false);
+  const [explanation, setExplaining]  = useState(null);
+  const [chartData,   setChartData]   = useState([]);
 
   const wsRef    = useRef(null);
   const chartRef = useRef([]);
 
-  // ── Connect & start stream ─────────────────────────────────────────────────
   const startStream = useCallback(() => {
     if (wsRef.current) wsRef.current.close();
     setFlows([]); setAnomalies([]); setSession(null);
@@ -33,35 +30,24 @@ export function useNetGuard() {
 
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data);
-
-      if (msg.type === 'init') {
-        setInitInfo(msg.payload);
-      }
-
       if (msg.type === 'flow') {
-        const flow = msg.payload;
-        setFlows(prev => [...prev.slice(-59), flow]);
-        // Update embeddings from flow (embedding not in WS flow, fetch separately)
+        setFlows(prev => [...prev.slice(-79), msg.payload]);
       }
-
       if (msg.type === 'anomaly') {
         setAnomalies(prev => [msg.payload, ...prev.slice(0, 49)]);
       }
-
       if (msg.type === 'session') {
         const s = msg.payload;
         setSession(s);
-        // Append to chart data (keep last 60 points)
         const point = {
-          t:     new Date().toLocaleTimeString('en', { hour12: false }),
-          acc:   Math.round(s.accuracy * 100),
-          score: s.privacy_score,
-          flows: s.total,
+          t:      new Date().toLocaleTimeString('en', { hour12:false }),
+          safe:   Math.round((s.accuracy || 0) * 100),
+          risk:   Math.min(s.threat_score || 0, 100),
+          flows:  s.total,
         };
         chartRef.current = [...chartRef.current.slice(-59), point];
         setChartData([...chartRef.current]);
       }
-
       if (msg.type === 'done') {
         setSession(msg.payload);
         setDone(true);
@@ -72,32 +58,18 @@ export function useNetGuard() {
 
   const stopStream = useCallback(() => {
     if (wsRef.current) {
-      try { wsRef.current.send(JSON.stringify({ cmd: 'stop' })); } catch {}
+      try { wsRef.current.send(JSON.stringify({ cmd:'stop' })); } catch {}
       wsRef.current.close();
     }
     setStreaming(false);
   }, []);
 
-  // ── Fetch embeddings periodically ─────────────────────────────────────────
-  useEffect(() => {
-    if (!streaming) return;
-    const id = setInterval(async () => {
-      try {
-        const r = await fetch(`${API}/api/embeddings`);
-        const d = await r.json();
-        setEmbeddings(d.embeddings || []);
-      } catch {}
-    }, 3000);
-    return () => clearInterval(id);
-  }, [streaming]);
-
-  // ── Explain anomaly via Claude ─────────────────────────────────────────────
   const explain = useCallback(async (anomaly) => {
-    setExplaining({ flow_id: anomaly.id, text: '', loading: true });
+    setExplaining({ flow_id:anomaly.id, text:'', loading:true });
     try {
       const r = await fetch(`${API}/api/explain`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
         body: JSON.stringify({
           flow_id:    anomaly.id,
           label:      anomaly.label,
@@ -107,22 +79,15 @@ export function useNetGuard() {
         }),
       });
       const d = await r.json();
-      setExplaining({ flow_id: anomaly.id, text: d.explanation, loading: false });
+      setExplaining({ flow_id:anomaly.id, text:d.explanation, loading:false });
     } catch {
-      setExplaining({
-        flow_id: anomaly.id,
-        text: 'Unable to reach AI explainer. Check backend connection.',
-        loading: false,
-      });
+      setExplaining({ flow_id:anomaly.id, text:'Could not reach AI explainer.', loading:false });
     }
   }, []);
 
-  const clearExplanation = useCallback(() => setExplaining(null), []);
-
   return {
     connected, streaming, flows, anomalies, session,
-    initInfo, done, embeddings, chartData,
-    explanation, explain, clearExplanation,
+    done, chartData, explanation, explain,
     startStream, stopStream,
   };
 }

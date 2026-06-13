@@ -1,11 +1,13 @@
 {
   "n_features": 60,
-  "n_classes": 4,
+  "n_classes": 6,
   "class_names": [
-    "browsing",
-    "streaming",
-    "video_call",
-    "gaming"
+    "benign",
+    "ddos",
+    "dos",
+    "portscan",
+    "botnet",
+    "bruteforce"
   ],
   "embed_dim": 128,
   "d_model": 64,
@@ -13,9 +15,11 @@
   "n_layers": 3,
   "architecture": "FlowTransformer",
   "label_map": {
-    "browsing": 0,
-    "streaming": 1,
-    "video_call": 2,
-    "gaming": 3
+    "benign": 0,
+    "ddos": 1,
+    "dos": 2,
+    "portscan": 3,
+    "botnet": 4,
+    "bruteforce": 5
   }
 }

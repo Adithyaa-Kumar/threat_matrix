@@ -1,11 +1,13 @@
-intra=0.928 inter=0.253 acc=0.9354 lat_p99=2.82ms
+intra=0.993 inter=-0.030 acc=0.9958 lat_p99=3.27ms
               precision    recall  f1-score   support
 
-    browsing       0.90      0.90      0.90      1200
-   streaming       0.91      0.91      0.91      1201
-  video_call       0.95      0.96      0.96      1200
-      gaming       0.98      0.97      0.97      1200
+      benign       0.99      0.98      0.99       679
+        ddos       1.00      1.00      1.00       679
+         dos       1.00      1.00      1.00       679
+    portscan       0.99      1.00      1.00       679
+      botnet       1.00      1.00      1.00       678
+  bruteforce       0.99      1.00      0.99       679
 
-    accuracy                           0.94      4801
-   macro avg       0.94      0.94      0.94      4801
-weighted avg       0.94      0.94      0.94      4801
+    accuracy                           1.00      4073
+   macro avg       1.00      1.00      1.00      4073
+weighted avg       1.00      1.00      1.00      4073
