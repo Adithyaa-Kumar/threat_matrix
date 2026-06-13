@@ -36,8 +36,8 @@ R  = "\033[0m";  B  = "\033[1m";  DIM = "\033[2m"
 CY = "\033[96m"; GR = "\033[92m"; YL  = "\033[93m"
 RD = "\033[91m"; BL = "\033[94m"; GY  = "\033[90m"
 
-CLASS_COL = {"browsing": BL, "streaming": GR, "video_call": CY, "gaming": RD}
-CLASS_ICO = {"browsing": "🌐", "streaming": "📺", "video_call": "📹", "gaming": "🎮"}
+CLASS_COL = {"benign": GR, "ddos": RD, "dos": RD, "portscan": YL, "botnet": CY, "bruteforce": BL, "unknown": GY}
+CLASS_ICO = {"benign": "✅", "ddos": "💥", "dos": "⚡", "portscan": "🔍", "botnet": "🤖", "bruteforce": "🔓", "unknown": "⚠"}
 
 # ─────────────────────────────────────────────────────────────────────────────
 # LOAD META  — reads actual keys from data/prepared/meta.json

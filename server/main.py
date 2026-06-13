@@ -229,50 +229,80 @@ class SessionState:
 
         return flow
 
+    # Threat severity weights — benign = 0, unknown = medium, attacks = high
+    THREAT_SEVERITY = {
+        "benign":     0,
+        "unknown":    2,
+        "portscan":   2,
+        "bruteforce": 3,
+        "dos":        3,
+        "botnet":     4,
+        "ddos":       4,
+    }
+    # Severity labels for frontend display
+    SEVERITY_LABEL = {
+        0: "SAFE",
+        1: "LOW",
+        2: "MEDIUM",
+        3: "HIGH",
+        4: "CRITICAL",
+    }
+
     def _is_anomaly(self, result: dict) -> bool:
-        conf  = result["confidence"]
         label = result["label"]
-        # Anomaly: low confidence OR unknown label
-        if label == "unknown":
+        conf  = result["confidence"]
+        # Any non-benign prediction is a threat event
+        if label != "benign":
             return True
-        if conf < 0.55:
+        # Low-confidence benign is still suspicious
+        if conf < 0.60:
             return True
-        # Anomaly: if top-2 probs are close (ambiguous)
+        # Ambiguous between benign and a threat class
         sorted_probs = sorted(result["probs"].values(), reverse=True)
-        if len(sorted_probs) >= 2 and (sorted_probs[0] - sorted_probs[1]) < 0.15:
+        if len(sorted_probs) >= 2 and (sorted_probs[0] - sorted_probs[1]) < 0.12:
             return True
         return False
 
-    def privacy_score(self) -> int:
-        """0–100. Higher = more leakage risk."""
+    def threat_score(self) -> int:
+        """0–100 threat level. Higher = more attacks detected."""
         if self.total == 0:
             return 0
         score = 0
-        # Anomaly ratio (0–40 pts)
-        anomaly_count = len([f for f in self.flows if f["is_anomaly"]])
-        score += min(40, int((anomaly_count / max(self.total, 1)) * 200))
-        # Unknown traffic (0–30 pts)
+        # Weighted attack ratio (0–50 pts)
+        for label, cnt in self.counts.items():
+            weight = self.THREAT_SEVERITY.get(label, 0)
+            score += min(50, int((cnt / max(self.total, 1)) * weight * 25))
+        # Unknown traffic ratio (0–20 pts)
         unknown_ratio = self.counts.get("unknown", 0) / max(self.total, 1)
-        score += min(30, int(unknown_ratio * 120))
-        # Low-confidence average (0–20 pts)
-        if self.latencies:
-            avg_conf = np.mean([f["confidence"] for f in self.flows[-50:]])
-            score += max(0, int((1.0 - avg_conf) * 40))
-        # Traffic diversity entropy (0–10 pts)
-        counts_arr = np.array(list(self.counts.values()), dtype=float)
-        if counts_arr.sum() > 0:
-            p = counts_arr / counts_arr.sum()
-            entropy = float(-np.sum(p * np.log2(p + 1e-9)))
-            score += min(10, int(entropy * 3))
+        score += min(20, int(unknown_ratio * 80))
+        # High-severity attack presence (0–20 pts)
+        for label in ("ddos", "botnet"):
+            if self.counts.get(label, 0) > 0:
+                score += 10
+        # Low average confidence (0–10 pts)
+        if self.flows:
+            avg_conf = float(np.mean([f["confidence"] for f in self.flows[-50:]]))
+            score += max(0, int((1.0 - avg_conf) * 20))
         return min(100, score)
+
+    # Keep privacy_score as alias for backwards compatibility with frontend
+    def privacy_score(self) -> int:
+        return self.threat_score()
 
     def summary(self) -> dict:
         lats = self.latencies or [0]
+        ts   = self.threat_score()
         return {
             "total":         self.total,
             "accuracy":      round(self.correct / max(self.total, 1), 4),
-            "privacy_score": self.privacy_score(),
+            "privacy_score": ts,               # kept for frontend compat
+            "threat_score":  ts,
+            "threat_level":  self.SEVERITY_LABEL.get(min(ts // 25, 4), "UNKNOWN"),
             "anomaly_count": len([f for f in self.flows if f["is_anomaly"]]),
+            "attack_breakdown": {
+                lbl: int(self.counts.get(lbl, 0))
+                for lbl in ["ddos", "dos", "portscan", "botnet", "bruteforce"]
+            },
             "counts":        dict(self.counts),
             "avg_latency":   round(float(np.mean(lats)), 2),
             "p99_latency":   round(float(np.percentile(lats, 99)), 2),
@@ -366,28 +396,36 @@ async def explain(req: ExplainRequest):
     """
     import httpx
 
-    # Build a concise context string for Claude
+    # Threat context descriptions for Claude
+    THREAT_CONTEXT = {
+        "ddos":       "a Distributed Denial-of-Service (DDoS) attack — an attempt to overwhelm a server with traffic",
+        "dos":        "a Denial-of-Service (DoS) attack — an attempt to make a service unavailable",
+        "portscan":   "a port scan — someone is probing your device to find open services to exploit",
+        "botnet":     "botnet command-and-control activity — your device may be communicating with attacker infrastructure",
+        "bruteforce": "a brute-force attack — repeated login attempts trying to guess a password",
+        "unknown":    "an unrecognised traffic pattern that doesn't match known application or attack profiles",
+    }
+    threat_desc = THREAT_CONTEXT.get(req.label, f"suspicious traffic classified as {req.label}")
+
     prob_lines = "\n".join(
         f"  {cls}: {round(p*100,1)}%" for cls, p in sorted(
             req.probs.items(), key=lambda x: -x[1])
     )
-    prompt = f"""You are NetGuard, a network security AI assistant that explains threats to everyday users.
+    prompt = f"""You are ThreatMatrix, a network security AI that explains cyber threats to everyday users.
 
-A suspicious network flow was detected:
-- Classified as: {req.label}
-- Confidence: {round(req.confidence * 100, 1)}%
-- Inference latency: {req.latency_ms}ms
-- Class probability breakdown:
+A network flow was detected and classified as a potential threat:
+- Threat type: {req.label.upper()}
+- What this means: {threat_desc}
+- Detection confidence: {round(req.confidence * 100, 1)}%
+- Model probability breakdown:
 {prob_lines}
 
-This flow is flagged as anomalous because: {"confidence is too low — the model is uncertain what this traffic is" if req.confidence < 0.55 else "the traffic pattern is ambiguous between multiple categories"}.
+Explain to someone with no technical background:
+1. What this threat means in plain English and what an attacker could be trying to do (1-2 sentences)
+2. How serious this is and whether immediate action is needed (be honest but calm)
+3. One specific, concrete action they can take right now
 
-Explain to a non-technical user:
-1. What this might mean in plain English (1-2 sentences)
-2. Whether they should be concerned (be honest but not alarmist)
-3. One concrete action they can take
-
-Keep it under 80 words. Use plain language. No bullet points — write as a short paragraph."""
+Keep it under 90 words. Write as a short paragraph, no bullet points."""
 
     try:
         async with httpx.AsyncClient(timeout=15.0) as client:
@@ -403,10 +441,16 @@ Keep it under 80 words. Use plain language. No bullet points — write as a shor
         data = resp.json()
         explanation = data["content"][0]["text"]
     except Exception as e:
-        explanation = (
-            f"An unusual traffic pattern was detected with low confidence ({round(req.confidence*100,1)}%). "
-            "This could be an unknown application or unusual network behaviour. "
-            "Check your running processes and consider closing unfamiliar applications."
+        fallback_map = {
+            "ddos":       "A DDoS attack floods your network with traffic to knock servers offline. This is high severity — check if your upstream provider has DDoS protection enabled.",
+            "dos":        "A DoS attack tries to overwhelm a specific service to make it unavailable. Consider blocking the source IP in your firewall immediately.",
+            "portscan":   "Someone is scanning your device for open ports — a common first step before a targeted attack. Enable your firewall and close any unnecessary open ports.",
+            "botnet":     "Botnet traffic suggests your device may be talking to attacker servers without your knowledge. Run a malware scan and consider isolating this device from your network.",
+            "bruteforce": "A brute-force attack is repeatedly trying passwords to break into a service. Enable rate-limiting or two-factor authentication on any exposed login pages.",
+        }
+        explanation = fallback_map.get(req.label,
+            f"Suspicious traffic ({req.label}) detected with {round(req.confidence*100,1)}% confidence. "
+            "Review your active connections and consider restarting the affected service."
         )
 
     # Mark anomaly as explained
