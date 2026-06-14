@@ -48,7 +48,7 @@ warnings.filterwarnings("ignore")
 # When running from cafe_project root: CAFE_ROOT = "."
 # ─────────────────────────────────────────────────────────────────────────────
 
-CAFE_ROOT = Path(os.getenv("CAFE_ROOT", "."))
+CAFE_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(CAFE_ROOT))
 
 # ─────────────────────────────────────────────────────────────────────────────

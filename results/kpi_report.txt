@@ -1,13 +1,13 @@
-intra=0.993 inter=-0.030 acc=0.9958 lat_p99=3.27ms
+intra=0.992 inter=-0.010 acc=0.9948 lat_p99=4.41ms
               precision    recall  f1-score   support
 
-      benign       0.99      0.98      0.99       679
+      benign       0.99      0.98      0.98       679
         ddos       1.00      1.00      1.00       679
          dos       1.00      1.00      1.00       679
-    portscan       0.99      1.00      1.00       679
+    portscan       1.00      1.00      1.00       679
       botnet       1.00      1.00      1.00       678
-  bruteforce       0.99      1.00      0.99       679
+  bruteforce       0.99      0.99      0.99       679
 
-    accuracy                           1.00      4073
-   macro avg       1.00      1.00      1.00      4073
-weighted avg       1.00      1.00      1.00      4073
+    accuracy                           0.99      4073
+   macro avg       0.99      0.99      0.99      4073
+weighted avg       0.99      0.99      0.99      4073

@@ -2,6 +2,7 @@ CyberSight (ThreatMatrix) 🛡️
 AI-Powered Digital Footprint Intelligence & Privacy Threat Detection
 
 CyberSight transforms raw, high-throughput network telemetry into human-understandable digital footprint intelligence. By pivoting away from traditional Deep Packet Inspection (DPI) and obfuscated security logs, CyberSight leverages a custom FlowTransformer Encoder to parse behavioral session metadata, evaluate user privacy risk, and generate immediate, natural-language mitigation workflows.
+
 📑 Table of Contents
 
     The Problem vs. Our Solution
@@ -23,6 +24,7 @@ CyberSight transforms raw, high-throughput network telemetry into human-understa
     Installation & Quickstart
 
 🔍 The Problem vs. Our Solution
+
 The Problem
 
 Every connected device exchanges thousands of complex network flows daily. Standard users are completely blind to their data footprint: what external apps are calling out, where data goes geographically, or if localized background processes are subtly exfiltrating assets. Traditional enterprise monitoring software fumbles at the consumer level—swamping users with raw packet dumps, Wireshark logs, and cryptically labeled indicators that require deep domain expertise to parse.
