@@ -1,178 +1,480 @@
-CyberSight (ThreatMatrix) 🛡️
-AI-Powered Digital Footprint Intelligence & Privacy Threat Detection
+# 🛡️ CyberSight (ThreatMatrix)
 
-CyberSight transforms raw, high-throughput network telemetry into human-understandable digital footprint intelligence. By pivoting away from traditional Deep Packet Inspection (DPI) and obfuscated security logs, CyberSight leverages a custom FlowTransformer Encoder to parse behavioral session metadata, evaluate user privacy risk, and generate immediate, natural-language mitigation workflows.
+### AI-Powered Digital Footprint Intelligence & Privacy Threat Detection
 
-📑 Table of Contents
+> **Understand your digital footprint. Detect threats. Respond with confidence.**
 
-    The Problem vs. Our Solution
+CyberSight transforms raw network telemetry into human-readable security intelligence. Instead of overwhelming users with packet captures, firewall logs, and cryptic alerts, CyberSight uses AI-powered behavioral analysis to explain what is happening on a device, why it matters, and what action should be taken.
 
-    CyberTech Challenge Alignment
+Built using FlowTransformer embeddings, anomaly detection, FastAPI, React, and explainable AI, CyberSight makes cybersecurity accessible to everyone—not just security professionals.
 
-    System Architecture
+---
 
-    AI & Machine Learning Architecture
+## 📑 Table of Contents
 
-    Core UI Elements & Live Telemetry
+* The Problem
+* Our Solution
+* CyberTech Challenge Alignment
+* System Architecture
+* AI & Machine Learning Architecture
+* Core Features
+* Demo Workflow
+* Technical Highlights
+* Project Structure
+* Installation & Quick Start
 
-    Deterministic Demo Storyline
+---
 
-    Technical Highlights & Performance
+# 🚨 The Problem
 
-    Project Structure
+Every connected device generates thousands of network interactions every day.
 
-    Installation & Quickstart
+Most users have little visibility into:
 
-🔍 The Problem vs. Our Solution
+* Which applications are communicating externally
+* How much data is leaving their device
+* Whether suspicious activity is occurring in the background
+* If their privacy is being compromised
 
-The Problem
+Traditional cybersecurity tools are designed for analysts and security engineers. They expose packet captures, IDS alerts, and protocol-level telemetry that require specialized expertise to interpret.
 
-Every connected device exchanges thousands of complex network flows daily. Standard users are completely blind to their data footprint: what external apps are calling out, where data goes geographically, or if localized background processes are subtly exfiltrating assets. Traditional enterprise monitoring software fumbles at the consumer level—swamping users with raw packet dumps, Wireshark logs, and cryptically labeled indicators that require deep domain expertise to parse.
-Our Solution
+As a result, many threats remain unnoticed until significant damage has already occurred.
 
-CyberSight introduces a privacy-first, metadata-only network analytics window. Instead of stripping packet payloads (preserving absolute user confidentiality), CyberSight isolates 60 behavioral features across sliding time-series flow boundaries—such as forward/backward inter-arrival times (IAT), packet size variances, and packet ratios. The underlying ML engine converts these signals into localized, explainable human metrics.
-🏆 CyberTech Challenge Alignment
+---
 
-CyberSight is explicitly engineered around the core triad of modern cybersecurity defense:
+# 💡 Our Solution
 
-    UNDERSTAND: Users monitor their real-time behavioral data footprint via concrete user-space indicators: live external application tracking, aggregated data upload volumes, destination country tracking, and a comprehensive Privacy Score.
+CyberSight provides a privacy-first intelligence layer for network activity.
 
-    DETECT: A deep-learning network sequences incoming metadata frames to isolate zero-day anomalies, malicious automated scripts, and multi-stage exploit patterns before lateral propagation occurs.
+Instead of inspecting packet contents, CyberSight analyzes behavioral metadata such as:
 
-    RESPOND: Instead of raw exceptions, CyberSight outputs a dedicated tri-part response script explaining exactly What happened, Why it matters, and provides One-Click actionable UI tools (e.g., [Block Source IP], [Isolate Asset]) to neutralize threats dynamically.
+* Flow duration
+* Packet timing
+* Traffic directionality
+* Communication frequency
+* Statistical network patterns
 
-🛠️ System Architecture
+This approach preserves user privacy while still enabling advanced threat detection.
 
-   [ Network Traffic Stream ]
-               │
-               ▼
-       [ Flow Extractor ]  ──► (Aggregates 60 Behavioral Packet Features)
-               │
-               ▼
-  [ FlowTransformer Encoder ] ──► (Generates 128-Dim Contextual Embeddings)
-               │
-      ┌────────┴────────┬────────────────────────┐
-      ▼                 ▼                        ▼
-[Classification]  [Anomaly Detection]  [Similarity Embed Search]
-(RobustScaler)    (Vector Distance)     (Novel Vector Clusters)
-      │                 │                        │
-      └────────┬────────┴────────────────────────┘
-               ▼
-       [ FastAPI Backend ] ──► (State Tracking & Telemetry Translation)
-               │
-               ▼
-     [ WebSockets Stream ] ──► (Low-Latency Reactive Binary Payload)
-               │
-               ▼
-     [ React UI Dashboard ] ──► (Live Monitor, Footprint Map & Action Handlers)
+CyberSight converts these signals into:
 
-🧠 AI & Machine Learning Architecture
+* 📊 Digital Footprint Intelligence
+* 🛡️ Cyber Health Scoring
+* 🚨 Real-Time Threat Alerts
+* 🧠 Explainable Threat Analysis
+* ⚡ Actionable Mitigation Recommendations
 
-The pipeline avoids traditional, static point-in-time signature checks by handling network traffic as contextual language sequences.
-1. FlowTransformer Encoder
+Users no longer need cybersecurity expertise to understand cybersecurity risks.
 
-    Feature Conditioning: The ingress pipeline filters exactly 60 pre-defined network features (e.g., Flow Duration, Fwd Packet Length Std, Flow IAT Max, Bwd Packets/s).
+---
+<img width="1918" height="912" alt="Screenshot 2026-06-14 013133" src="https://github.com/user-attachments/assets/580443d5-012c-4b3b-b568-7bc3a46f626d" />
 
-    Pipeline Cleanliness: Outliers are clipped cleanly to [−10,10] via an upstream RobustScaler fitted strictly on training baselines to completely eliminate validation data leakage.
+# 🏆 CyberTech Challenge Alignment
 
-    Representation Learning: The sequential data runs through a 3-layer, 4-head Multi-Head Attention (MHA) Transformer network (dmodel​=64) to build high-dimensional 128-dimensional temporal sequence embeddings tracking long-range traffic dependencies.
+CyberSight directly addresses the three pillars of modern cybersecurity:
 
-2. Multi-Class Canonical Mapping
+## 👁️ Understand
 
-Embeddings feed into a tuned multi-class head mapping raw, fragmented dataset labels (e.g., DDOS attack-HOIC, SSH-Patator, Infiltration) into 6 highly stable, target canonical classes:
-Output Classes={benign,ddos,dos,portscan,botnet,bruteforce}
-📊 Core UI Elements & Live Telemetry
+Users gain visibility into their digital footprint through:
 
-The platform drops technical noise in favor of instantaneous, highly scannable tactical telemetry:
-Baseline Monitoring (CyberSight Mode)
+* Live traffic monitoring
+* Behavioral activity tracking
+* Privacy risk indicators
+* Cyber Health scoring
+<img width="413" height="743" alt="Screenshot 2026-06-14 013215" src="https://github.com/user-attachments/assets/f2eaa87e-9d22-4bfb-bb8f-fe82277e0ed0" />
 
-When the network behavior is uncompromised, the interface acts as a passive guardian:
+## 🔍 Detect
 
-    Real-Time Flow Classification: Displays incoming system streams categorized by high-level user activities (Browsing, Gaming, Video Call, Streaming) alongside model confidence ratings.
+AI-powered behavioral models identify:
 
-    Privacy Risk Score: Features a unified circular telemetry visualization demonstrating behavioral baselines. It contextualizes data state transparency with simple status cards (e.g., "SAFE: Your network behaviour looks normal. No suspicious patterns detected.").
+* Botnet activity
+* Port scanning
+* Brute-force attacks
+* DoS/DDoS attacks
+* Suspicious anomalies
 
-    Traffic Breakdown: Aggregates background protocols into proportional, colored distributions to easily parse background volume.
+before they escalate into major incidents.
+<img width="982" height="736" alt="Screenshot 2026-06-14 013324" src="https://github.com/user-attachments/assets/859bba90-e306-467b-9901-941d2f32219b" />
 
-Active Attack Interception (ThreatMatrix Mode)
+## ⚡ Respond
 
-When automated exploit scripts are introduced, the dashboard escalates to a high-alert mitigation console:
+Every detected threat is translated into plain English and paired with:
 
-    Volumetric Threat Tracking: Prominently indexes malicious spikes via clear counter blocks, tracking total live threats alongside latency degradation and safe traffic ratios.
+* Threat explanations
+* Risk assessments
+* Recommended actions
+* One-click mitigation controls
 
-    Live Attack Streams: Flags dangerous flows in red alert blocks, itemizing the precise malicious classification type (Flood attack, Bot activity, Probe detected) and severity parameters.
+allowing users to respond confidently instead of guessing what an alert means.
+<img width="1918" height="575" alt="Screenshot 2026-06-14 013416" src="https://github.com/user-attachments/assets/140f4b40-f21d-4b9a-9f32-4ed52636e73e" />
 
-    Explainable Mitigation Panel: Translates model outputs directly into direct technical context (e.g., "Someone is trying to overwhelm your connection with junk traffic. -> Restart your router and contact your ISP.") to make response steps fully clear.
+---
 
-🎬 Deterministic Demo Storyline
+# 🏗️ System Architecture
 
-To guarantee an impactful presentation format for hackathon evaluation teams, CyberSight features a deterministic test harness sequence:
+```text
+Network Traffic Stream
+          │
+          ▼
+    Flow Extractor
+ (60 Behavioral Features)
+          │
+          ▼
+ FlowTransformer Encoder
+ (128D Embeddings)
+          │
+ ┌────────┼───────────────┐
+ │        │               │
+ ▼        ▼               ▼
+Classification   Anomaly Detection   Similarity Search
+          │
+          ▼
+     FastAPI Backend
+          │
+          ▼
+    WebSocket Stream
+          │
+          ▼
+    React Dashboard
+ ┌────────┬────────┬────────┐
+ ▼        ▼        ▼        ▼
+Live    Digital  Threat   System
+Monitor Footprint Feed    Intel
+```
 
-    The Baseline: The session initiates in a pristine state. The interface reads 100% green: Cyber Health: 96%, showing regular safe background traffic.
+---
 
-    The Attack Injection: A hidden hotkey simulation script fires a tight burst of automated adversarial frames (Flood attack + Bot activity).
+# 🧠 AI & Machine Learning Architecture
 
-    Real-Time Detection: The sliding tracking window catches the anomaly. Cyber Health immediately collapses to 19% (Status: HIGH RISK).
+CyberSight treats network behavior as a sequence-learning problem rather than relying on static signatures or payload inspection.
 
-    Explainable AI Generation: The threat panel parses the classification vector and populates consumer-actionable text blocks:
+## Feature Extraction
 
-        What happened: "Someone is trying to overwhelm your connection with junk traffic."
+Each network flow is represented using 60 metadata-based features including:
 
-        Why it matters: "Your bandwidth is actively being starved by volumetric exploits."
+* Flow Duration
+* Packet Length Statistics
+* Flow Inter-Arrival Times (IAT)
+* Packet Ratios
+* Throughput Metrics
+* Directional Communication Patterns
 
-        What to do: "Restart your router and contact your ISP."
+## Data Conditioning
 
-    One-Click Remediation: The presenter hits the interactive [Block Source IP] action button. The interface updates its local state cache, drops the malicious stream vectors, and the Cyber Health score safely climbs back up to 90%.
+The pipeline uses:
 
-⚡ Technical Highlights & Performance
+* RobustScaler normalization
+* Outlier clipping
+* Leakage-safe train/validation separation
 
-    Memory Optimized Streaming: Streams massive CSV files in deterministic 50,000-row chunks, running safely within restrictive 8 GB system RAM profiles.
+to ensure stable model performance.
 
-    Zero Payload Snooping: Operates purely on OSI Layer 3/4 header stats, achieving absolute zero-trust user confidentiality compliance.
+## FlowTransformer Encoder
 
-    Sub-10ms Inference Latency: Engineered with lightweight matrix operations guaranteeing a P99 inference cycle of ∼7.97 ms, satisfying strict real-time live monitor thresholds.
+The processed feature sequence is passed through a custom Transformer architecture:
 
-📂 Project Structure
+* 3 Transformer Layers
+* 4 Multi-Head Attention Heads
+* Hidden Dimension: 64
+* Embedding Dimension: 128
 
+This allows CyberSight to learn long-range behavioral dependencies and temporal attack patterns.
+
+## Traffic Classification
+
+The generated embeddings are mapped into six canonical security classes:
+
+```text
+Benign
+DDoS
+DoS
+Port Scan
+Botnet
+Brute Force
+```
+
+This provides a consistent threat taxonomy across multiple cybersecurity datasets.
+
+---
+
+# 📊 Core Features
+
+## 👁️ Live Monitor
+
+Real-time traffic classification showing:
+
+* Active network behavior
+* Confidence scores
+* Threat counters
+* System health indicators
+
+---
+
+## 🌐 Digital Footprint
+
+Provides visibility into:
+
+* Device activity
+* Traffic categories
+* Privacy exposure
+* Behavioral patterns
+
+---
+
+## 🚨 Threat Feed
+
+Generates explainable security alerts:
+
+### What Happened?
+
+A plain-language description of detected activity.
+
+### Why It Matters?
+
+Context explaining the potential impact.
+
+### Recommended Action
+
+Actionable guidance for mitigation.
+
+---
+
+## 🛡️ Cyber Health Score
+
+Aggregates behavioral indicators into a simple security metric:
+
+```text
+Cyber Health: 92/100
+Status: LOW RISK
+```
+
+---
+
+# 🎬 Demo Workflow
+
+CyberSight includes a deterministic demonstration mode for reliable presentations.
+
+### Phase 1 — Normal Operation
+
+* Cyber Health: 96%
+* Safe traffic dominates activity
+* No active threats detected
+
+### Phase 2 — Attack Injection
+
+Simulated attack traffic introduces:
+
+* Botnet activity
+* Port scanning
+* Volumetric flood traffic
+
+### Phase 3 — Detection
+
+CyberSight automatically:
+
+* Detects abnormal behavior
+* Generates threat explanations
+* Updates Cyber Health Score
+* Displays mitigation recommendations
+
+### Phase 4 — Response
+
+The user applies:
+
+```text
+Block Source IP
+```
+
+The malicious activity is filtered from the active stream and Cyber Health recovers, demonstrating the complete:
+
+```text
+Understand
+    ↓
+Detect
+    ↓
+Respond
+```
+
+workflow.
+
+---
+
+# ⚡ Technical Highlights
+
+### Privacy-First Design
+
+* No Deep Packet Inspection
+* No payload collection
+* Metadata-only behavioral analysis
+
+### Real-Time Performance
+
+* Sub-10ms inference latency
+* Live WebSocket streaming
+* Low-overhead deployment architecture
+
+### Efficient Processing
+
+* Chunked dataset processing
+* Memory-optimized pipelines
+* Commodity hardware support
+
+### Explainable Security Intelligence
+
+* Human-readable threat explanations
+* Transparent risk scoring
+* Actionable recommendations
+
+---
+
+# 📂 Project Structure
+
+```text
+CyberSight
 ├── data/
-│   ├── raw/                 # Cleaned source CSV chunks (CICIDS2017 / 2018)
-│   ├── features/            # Intermediary compiled parquet file maps
-│   └── prepared/            # Downstream scaled .npy vectors, scaler.pkl, meta.json
+│   ├── raw/
+│   ├── features/
+│   └── prepared/
+│
 ├── server/
-│   ├── main.py              # FastAPI core app engine handling WebSockets
-│   └── tracker.py           # Stateful translation manager (Telemetry Translator)
+│   ├── main.py
+│   └── tracker.py
+│
 ├── frontend/
-│   src/components/          # Live Monitor panels, Privacy Score cards & Alert feeds
-├── build_dataset.py         # Stream-reads, normalizes, scales, and balances datasets
-├── train_encoder.py         # Formulates custom multi-head FlowTransformer embeddings
-└── live_demo.py             # Streaming simulation replay traffic engine
+│   └── src/
+│       ├── App.js
+│       ├── components.js
+│       ├── useNetGuard.js
+│       └── index.css
+│
+├── models/
+│   ├── encoder_best.pt
+│   ├── svm_classifier.pkl
+│   └── knn_classifier.pkl
+│
+├── build_dataset.py
+├── train_encoder.py
+├── flow_extractor.py
+└── live_demo.py
+```
 
-🚀 Installation & Quickstart
-1. Data Preparation Pipeline
+---
 
-Isolate raw files inside data/raw/ and compile the balanced, scaled dataset splits:
-Bash
+# 🚀 Installation & Quick Start
 
-# Clean, balance, scale, and output local matrix files
-python3 build_dataset.py --min-per-class 5000
+## Prerequisites
 
-# Optimization pass: Bypass extraction if flows.parquet is already local
-python3 build_dataset.py --skip-extract
+* Python 3.10+
+* Node.js 18+
+* npm
+* Git
 
-2. Launch the Backend Server Array
+## Backend Setup
 
-Spin up the FastAPI data streamer:
-Bash
+```bash
+python3 -m venv venv
+source venv/bin/activate
 
 cd server
 pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
+cd ..
+```
 
-Launch the web monitor client console:
-Bash
+## Frontend Setup
 
+```bash
 cd frontend
 npm install
-npm run start
+cd ..
+```
 
-    Note on Contributions: We welcome pull requests and feature extensions to our explainable core. For major architectural modifications, please open an issue first to discuss your proposals.
+## Prepare Dataset
+
+```bash
+python3 build_dataset.py --min-per-class 5000
+```
+
+Skip extraction if features already exist:
+
+```bash
+python3 build_dataset.py --skip-extract
+```
+
+## Start Backend
+
+```bash
+source venv/bin/activate
+uvicorn server.main:app --reload --port 8000
+```
+
+Backend:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Start Frontend
+
+```bash
+cd frontend
+npm start
+```
+
+Frontend:
+
+```text
+http://localhost:3000
+```
+
+## Run Live Demo
+
+```bash
+python live_demo.py
+```
+
+---
+
+# 🛠️ Technology Stack
+
+### Backend
+
+* Python
+* FastAPI
+* PyTorch
+* Scikit-Learn
+* Scapy
+
+### Frontend
+
+* React
+* Recharts
+* WebSockets
+
+### Machine Learning
+
+* FlowTransformer
+* Similarity Search
+* Anomaly Detection
+* Multi-Class Classification
+
+---
+
+# 🤝 Contributing
+
+Contributions, feature requests, and improvements are welcome.
+
+For major architectural changes, please open an issue first to discuss the proposed design and implementation.
+
+---
+
+# 📄 License
+
+Released under the MIT License.
+
+---
+
+# 🌍 Impact
+
+CyberSight demonstrates how advanced AI and cybersecurity techniques can be transformed into accessible tools that help users understand, detect, and respond to digital threats in real time.
+
+By combining behavioral intelligence, privacy-preserving analytics, and explainable AI, CyberSight makes cybersecurity actionable rather than intimidating.
