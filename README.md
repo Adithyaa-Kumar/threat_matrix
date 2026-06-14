@@ -327,37 +327,36 @@ workflow.
 
 ---
 
-# 📂 Project Structure
+## 📂 Project Structure
 
 ```text
 CyberSight
 ├── data/
-│   ├── raw/
-│   ├── features/
-│   └── prepared/
+│   ├── raw/          # Original network traffic datasets
+│   ├── features/     # Extracted flow-level features
+│   └── prepared/     # Scaled and processed training data
 │
 ├── server/
-│   ├── main.py
-│   └── tracker.py
+│   ├── main.py       # FastAPI backend and WebSocket streaming engine
+│   └── tracker.py    # Cyber Health, threat tracking, and telemetry state management
 │
 ├── frontend/
 │   └── src/
-│       ├── App.js
-│       ├── components.js
-│       ├── useNetGuard.js
-│       └── index.css
+│       ├── App.js            # Main dashboard layout and routing
+│       ├── components.js     # Reusable UI widgets and panels
+│       ├── useNetGuard.js    # Real-time state management and WebSocket handling
+│       └── index.css         # Dashboard styling and visual theme
 │
 ├── models/
-│   ├── encoder_best.pt
-│   ├── svm_classifier.pkl
-│   └── knn_classifier.pkl
+│   ├── encoder_best.pt       # Trained FlowTransformer encoder weights
+│   ├── svm_classifier.pkl    # SVM classification model
+│   └── knn_classifier.pkl    # KNN similarity-based classifier
 │
-├── build_dataset.py
-├── train_encoder.py
-├── flow_extractor.py
-└── live_demo.py
+├── build_dataset.py          # Dataset preprocessing, balancing, and feature generation
+├── train_encoder.py          # FlowTransformer training pipeline
+├── flow_extractor.py         # Converts network traffic into model-ready flow features
+└── live_demo.py              # Simulates live traffic for dashboard demonstrations
 ```
-
 ---
 
 # 🚀 Installation & Quick Start
